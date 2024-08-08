@@ -14,7 +14,7 @@ taskForm.addEventListener("submit", (event) => {
 
   if (task) {
     taskList.append(createTaskElement(task));
-    storeTaskInLocalStorage(task);// guarda la tarea en el local storage
+    storeTaskInLocalStorage(task);
     taskInput.value = "";
   }
 });
@@ -43,6 +43,7 @@ taskList.addEventListener("click", (event) => {
 
 function deleteTask(taskItem) {
   if (confirm("Estás segura / seguro de borrar este elemento?")) {
+    removeFromLocalStorage(taskItem.firstChild.textContent);
     taskItem.remove();
   }
 }
@@ -51,19 +52,35 @@ function editTask(taskItem) {
   const newTask = prompt("Edita la tarea:", taskItem.firstChild.textContent);
   if (newTask !== null) {
     taskItem.firstChild.textContent = newTask;
+    updateLocalStorage();
   }
 }
- //funcion para guardar las tareas en el localstorage
-function storeTaskInLocalStorage(task) {
-  const tasks = JSON.parse(localStorage.getItem("tasks") || "[]"); 
 
-  tasks.push(task);//agrega elementos a una tarea
-  localStorage.setItem("tasks", JSON.stringify(tasks)); //guarda el array en un string
+function storeTaskInLocalStorage(task) {
+  const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+
+  tasks.push(task);
+  localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 function loadTasks() {
-  const tasks = JSON.parse(localStorage.getItem("tasks") || "[]"); //aqui estamos preguntando si existen tareas guardadas en el localStorage sino exiten nos arroja un array vacio
+  const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
   tasks.forEach((task) => {
-    taskList.appendChild(createTaskElement(task));//si existen las tareas hazme un apendchild de los elementos
+    taskList.appendChild(createTaskElement(task));
   });
+}
+
+function updateLocalStorage() {
+  const tasks = Array.from(taskList.querySelectorAll("li")).map(
+    (li) => li.firstChild.textContent // aqui trae todas las (li) que tendriamos
+  );
+  localStorage.setItem("tasks", JSON.stringify(tasks));//set lo que hace es setiar la informacion
+}
+
+function removeFromLocalStorage(taskContent) {
+  const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+
+  const updateTasks = tasks.filter((task) => task !== taskContent);
+
+  localStorage.setItem("tasks", JSON.stringify(updateTasks));
 }
