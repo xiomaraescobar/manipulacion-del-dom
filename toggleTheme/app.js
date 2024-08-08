@@ -52,7 +52,7 @@ function editTask(taskItem) {
   const newTask = prompt("Edita la tarea:", taskItem.firstChild.textContent);
   if (newTask !== null) {
     taskItem.firstChild.textContent = newTask;
-    updateLocalStorage(); //actualiza lo que se almaceno y se actualizó en el localStorage
+    updateLocalStorage();
   }
 }
 
@@ -71,10 +71,10 @@ function loadTasks() {
 }
 
 function updateLocalStorage() {
-  const tasks = Array.from(taskList.querySelectorAll("li")).map( //trae el estado actual de los elementos
-    (li) => li.firstChild.textContent // aqui trae todas las (li) que tendriamos
+  const tasks = Array.from(taskList.querySelectorAll("li")).map(
+    (li) => li.firstChild.textContent
   );
-  localStorage.setItem("tasks", JSON.stringify(tasks));//set lo que hace es setiar la informacion
+  localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 function removeFromLocalStorage(taskContent) {
@@ -83,4 +83,22 @@ function removeFromLocalStorage(taskContent) {
   const updateTasks = tasks.filter((task) => task !== taskContent);
 
   localStorage.setItem("tasks", JSON.stringify(updateTasks));
+}
+
+const themeToggleButton = document.getElementById("toggle-theme-btn");
+
+const currentTheme = localStorage.getItem("theme");
+console.log(currentTheme);
+
+themeToggleButton.addEventListener("click", () => {
+  document.body.classList.toggle("dark-theme");
+
+  const theme = document.body.classList.contains("dark-theme")
+    ? "dark"
+    : "light";
+  localStorage.setItem("theme", theme);
+});
+
+if (currentTheme === "dark") {
+  document.body.classList.add("dark-theme");
 }
